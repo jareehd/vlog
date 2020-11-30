@@ -48,5 +48,25 @@ router.post('/users/logout', async(req,res)=>{
     }
 })
 
+router.patch('/users' , async (req,res)=>{
+    const updates = Object.keys(req.body) 
+    
+    try{
+        updates.forEach((update)=> req.user[update] = req.body[update])
+        await req.user.save()
+        res.send()
+    }catch(e){
+        res.status(401).send()
+    }
+})
+
+router.delete('/users' , async (req,res)=>{
+    try{
+        await req.user.remove()
+        res.send()
+    }catch(e){
+        res.status(400).send()
+    }
+})
 
 module.exports = router
