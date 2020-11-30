@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const validator = require('validator')
-const Vlog = require('./vlogSchema')
+const Vlog = require('./vlogModel')
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -68,13 +68,13 @@ userSchema.methods.toJSON = function(){
 userSchema.methods.generateToken = async function(){
     const user = this
     const token = jwt.sign({_id:user._id.toString()}, process.env.JWT_SECRET)
-    user.tokens.push(token)
+    user.tokens.push({token})
     await user.save()
     return token
 }
 
 // search user by email , password
-userSchema.statics.findByCredential = function(email ,password){
+userSchema.statics.findByCredential = async function(email ,password){
     
     const user = await User.findOne({email})
     if(!user) throw new Error('something is wrong either email or password')
